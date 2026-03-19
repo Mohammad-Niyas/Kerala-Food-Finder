@@ -24,6 +24,7 @@ func SetupRoutes(router *gin.Engine) {
 		{
 			dishes.GET("", controllers.GetAllDishes)
 			dishes.GET("/:id", controllers.GetDish)
+			dishes.POST("", controllers.CreateDish)
 			dishes.POST("/:id/save", controllers.SaveDish)
 			dishes.DELETE("/:id/save", controllers.UnsaveDish)
 			dishes.GET("/:id/reviews", controllers.GetReviews)

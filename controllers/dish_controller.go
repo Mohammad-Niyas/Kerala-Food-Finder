@@ -100,3 +100,75 @@ func UnsaveDish(c *gin.Context) {
 		"message": "Dish unsaved successfully!",
 	})
 }
+
+func CreateDish(c *gin.Context) {
+
+	var input struct {
+		RestaurantName string `json:"restaurant_name"`
+		City           string `json:"city"`
+		Area           string `json:"area"`
+		Name           string `json:"name"`
+		Category       string `json:"category"`
+		Notes          string `json:"notes"`
+		ReelLink       string `json:"reel_link"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid input",
+		})
+		return
+	}
+
+	if input.RestaurantName == "" || 
+	   input.City == "" || 
+	   input.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Restaurant name, city and dish name are required",
+		})
+		return
+	}
+
+	restaurant := models.FindOrCreateRestaurant(
+		input.RestaurantName,
+		input.City,
+		input.Area,
+	)
+
+	var existingDish models.Dish
+	result := config.DB.Where(
+		"name = ? AND restaurant_id = ?",
+		input.Name, restaurant.ID,
+	).First(&existingDish)
+
+	if result.Error == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Dish already exists!",
+			"data":    existingDish,
+		})
+		return
+	}
+
+	dish := models.Dish{
+		Name:         input.Name,
+		RestaurantID: restaurant.ID,
+		Category:     input.Category,
+		Notes:        input.Notes,
+		Saves:        0,
+	}
+	config.DB.Create(&dish)
+
+	if input.ReelLink != "" {
+		reel := models.Reel{
+			RestaurantID: restaurant.ID,
+			ReelLink:     input.ReelLink,
+			AddedBy:      "User",
+		}
+		config.DB.Create(&reel)
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Dish added successfully!",
+		"data":    dish,
+	})
+}
