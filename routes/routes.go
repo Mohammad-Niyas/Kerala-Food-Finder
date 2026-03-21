@@ -3,6 +3,7 @@ package routes
 import (
 	"kerala-food-finder/controllers"
 	"kerala-food-finder/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,7 +39,12 @@ func SetupRoutes(router *gin.Engine) {
 
 		api.GET("/search", controllers.Search)
 
-		// Trending
 		api.GET("/trending", controllers.GetTrending)
+		
+		ai := api.Group("/ai")
+		{
+			ai.POST("/extract", controllers.ExtractFromReel)
+			ai.POST("/save", controllers.SaveExtractedDishes)
+		}
 	}
 }

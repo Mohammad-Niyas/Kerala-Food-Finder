@@ -1,3 +1,8 @@
 .env
 *.exe
 /tmp
+/temp
+*.mp4
+*.mp3
+*.jpg
+*.wav
