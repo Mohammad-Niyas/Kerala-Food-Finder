@@ -88,8 +88,108 @@ const getCategoryColor = (category) => {
 
 const uid = () => "u" + Date.now() + Math.random().toString(36).slice(2, 6);
 
+const T = LIGHT_T;
+
+const Stars = ({ value, onChange, size = 22 }) => (
+  <div style={{ display: "flex", gap: 3 }}>
+    {[1, 2, 3, 4, 5].map(n => (
+      <span key={n} onClick={() => onChange && onChange(n)}
+        style={{ fontSize: size, cursor: onChange ? "pointer" : "default", opacity: n <= value ? 1 : .15, transition: "opacity .1s" }}>
+        ⭐
+      </span>
+    ))}
+  </div>
+);
+
+const Tag = ({ text, color }) => (
+  <span style={{ background: `${color}18`, color, fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 99, border: `1px solid ${color}28` }}>
+    {text}
+  </span>
+);
+
+const RatingBar = ({ label, value, color = GOLD }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 9 }}>
+    <span style={{ color: T.text2, fontSize: 12, width: 90, flexShrink: 0, fontWeight: 500 }}>{label}</span>
+    <div style={{ flex: 1, background: T.surface2, borderRadius: 99, height: 5, overflow: "hidden" }}>
+      <div style={{ width: `${(value / 5) * 100}%`, height: "100%", background: color, borderRadius: 99, transition: "width .5s" }} />
+    </div>
+    <span style={{ color: T.text, fontSize: 12, fontWeight: 700, width: 26, textAlign: "right" }}>{value > 0 ? value.toFixed(1) : "-"}</span>
+  </div>
+);
+
+const PrimaryBtn = ({ children, onClick, full = false, variant = "gold", disabled = false }) => {
+  const variants = {
+    gold: { background: `linear-gradient(135deg,${GOLD},${GOLD_MID})`, color: "#1C1408", border: "none", boxShadow: `0 4px 16px ${GOLD}44` },
+    outline: { background: "transparent", color: T.accent, border: `1.5px solid ${T.accentBorder}`, boxShadow: "none" },
+    ghost: { background: T.surface2, color: T.text2, border: `1.5px solid ${T.border}`, boxShadow: "none" },
+    green: { background: `linear-gradient(135deg,${GREEN},#047857)`, color: "#fff", border: "none", boxShadow: `0 4px 16px ${GREEN}44` },
+  };
+  return (
+    <button onClick={onClick} disabled={disabled}
+      style={{ ...variants[variant], borderRadius: 13, padding: "13px 20px", fontSize: 14, fontWeight: 700, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? .6 : 1, width: full ? "100%" : "auto", fontFamily: "'Plus Jakarta Sans',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all .15s" }}>
+      {children}
+    </button>
+  );
+};
+
+const Field = ({ label, value, onChange, placeholder, multi = false, type = "text" }) => (
+  <div style={{ marginBottom: 13 }}>
+    <p style={{ color: T.text2, fontSize: 12, fontWeight: 600, margin: "0 0 6px" }}>{label}</p>
+    {multi
+      ? <textarea value={value} onChange={onChange} placeholder={placeholder} rows={3}
+        style={{ background: T.surface2, border: `1.5px solid ${T.border}`, borderRadius: 12, padding: "11px 13px", color: T.text, fontSize: 14, width: "100%", outline: "none", fontFamily: "'Plus Jakarta Sans',sans-serif", resize: "none" }} />
+      : <input value={value} onChange={onChange} placeholder={placeholder} type={type}
+        style={{ background: T.surface2, border: `1.5px solid ${T.border}`, borderRadius: 12, padding: "11px 13px", color: T.text, fontSize: 14, width: "100%", outline: "none", fontFamily: "'Plus Jakarta Sans',sans-serif" }} />
+    }
+  </div>
+);
+
+const DishCard = ({ dish, onOpen, delay = 0, isSaved, onToggleSave }) => {
+  const restaurant = dish.Restaurant || dish.restaurant;
+  const color = getCategoryColor(dish.category || dish.Category);
+  const tag = getDishTag(dish);
+  return (
+    <div onClick={onOpen}
+      style={{ background: T.surface, borderRadius: 18, marginBottom: 11, border: `1px solid ${T.border}`, overflow: "hidden", cursor: "pointer", animation: `slideUp .32s ease forwards`, animationDelay: `${delay}s`, opacity: 0, boxShadow: T.shadow }}>
+      <div style={{ height: 2.5, background: `linear-gradient(90deg,${color},transparent)` }} />
+      <div style={{ padding: "13px 15px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", gap: 5, marginBottom: 7, flexWrap: "wrap" }}>
+              <Tag text={tag} color={color} />
+              {restaurant?.Verified && <Tag text="✓" color={GREEN} />}
+            </div>
+            <h3 style={{ color: T.text, fontSize: 15, fontWeight: 700, margin: "0 0 3px", letterSpacing: -.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Fraunces',serif" }}>
+              {dish.Name || dish.name}
+            </h3>
+            <p style={{ color: T.text2, fontSize: 12, margin: "0 0 2px", fontWeight: 500 }}>{restaurant?.Name || restaurant?.name}</p>
+            <p style={{ color: T.text3, fontSize: 11, margin: 0 }}>📍 {restaurant?.Area || restaurant?.area} · {restaurant?.City || restaurant?.city}</p>
+          </div>
+          <button onClick={e => { e.stopPropagation(); onToggleSave(dish); }}
+            style={{ width: 38, height: 38, background: isSaved ? T.accentBg : T.surface2, border: `1.5px solid ${isSaved ? T.accentBorder : T.border}`, borderRadius: 11, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 16, flexShrink: 0, transition: "all .15s" }}>
+            {isSaved ? "🔖" : "＋"}
+          </button>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 11, paddingTop: 11, borderTop: `1px solid ${T.border}` }}>
+          <span style={{ color: dish.saves > 0 ? "#F59E0B" : T.text3, fontSize: 12, fontWeight: 700 }}>
+            {dish.saves > 0 ? `★ ${(4 + Math.random()).toFixed(1)}` : "★ New"}
+          </span>
+          <span style={{ color: T.text3, fontSize: 11 }}>🔖 {(dish.Saves || dish.saves || 0).toLocaleString()}</span>
+          <span style={{ color: T.text3, fontSize: 11 }}>📹 Reel</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Spinner = () => (
+  <div style={{ textAlign: "center", padding: "40px 0" }}>
+    <div style={{ fontSize: 32, animation: "spin 1s linear infinite", display: "inline-block", marginBottom: 10 }}>🌀</div>
+    <p style={{ color: T.text2, fontSize: 14 }}>Loading...</p>
+  </div>
+);
+
 export default function App() {
-  const T = LIGHT_T;
 
   // ── State ──
   const [tab, setTab] = useState("home");
@@ -305,109 +405,6 @@ api.get(`/restaurants/${restaurant.ID || restaurant.id}/reels`),
     return (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
   };
 
-  // ── UI Components ──
-  const Stars = ({ value, onChange, size = 22 }) => (
-    <div style={{ display: "flex", gap: 3 }}>
-      {[1, 2, 3, 4, 5].map(n => (
-        <span key={n} onClick={() => onChange && onChange(n)}
-          style={{ fontSize: size, cursor: onChange ? "pointer" : "default", opacity: n <= value ? 1 : .15, transition: "opacity .1s" }}>
-          ⭐
-        </span>
-      ))}
-    </div>
-  );
-
-  const Tag = ({ text, color }) => (
-    <span style={{ background: `${color}18`, color, fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 99, border: `1px solid ${color}28` }}>
-      {text}
-    </span>
-  );
-
-  const RatingBar = ({ label, value, color = GOLD }) => (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 9 }}>
-      <span style={{ color: T.text2, fontSize: 12, width: 90, flexShrink: 0, fontWeight: 500 }}>{label}</span>
-      <div style={{ flex: 1, background: T.surface2, borderRadius: 99, height: 5, overflow: "hidden" }}>
-        <div style={{ width: `${(value / 5) * 100}%`, height: "100%", background: color, borderRadius: 99, transition: "width .5s" }} />
-      </div>
-      <span style={{ color: T.text, fontSize: 12, fontWeight: 700, width: 26, textAlign: "right" }}>{value > 0 ? value.toFixed(1) : "-"}</span>
-    </div>
-  );
-
-  const PrimaryBtn = ({ children, onClick, full = false, variant = "gold", disabled = false }) => {
-    const variants = {
-      gold: { background: `linear-gradient(135deg,${GOLD},${GOLD_MID})`, color: "#1C1408", border: "none", boxShadow: `0 4px 16px ${GOLD}44` },
-      outline: { background: "transparent", color: T.accent, border: `1.5px solid ${T.accentBorder}`, boxShadow: "none" },
-      ghost: { background: T.surface2, color: T.text2, border: `1.5px solid ${T.border}`, boxShadow: "none" },
-      green: { background: `linear-gradient(135deg,${GREEN},#047857)`, color: "#fff", border: "none", boxShadow: `0 4px 16px ${GREEN}44` },
-    };
-    return (
-      <button onClick={onClick} disabled={disabled}
-        style={{ ...variants[variant], borderRadius: 13, padding: "13px 20px", fontSize: 14, fontWeight: 700, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? .6 : 1, width: full ? "100%" : "auto", fontFamily: "'Plus Jakarta Sans',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all .15s" }}>
-        {children}
-      </button>
-    );
-  };
-
-  const Field = ({ label, value, onChange, placeholder, multi = false, type = "text" }) => (
-    <div style={{ marginBottom: 13 }}>
-      <p style={{ color: T.text2, fontSize: 12, fontWeight: 600, margin: "0 0 6px" }}>{label}</p>
-      {multi
-        ? <textarea value={value} onChange={onChange} placeholder={placeholder} rows={3}
-          style={{ background: T.surface2, border: `1.5px solid ${T.border}`, borderRadius: 12, padding: "11px 13px", color: T.text, fontSize: 14, width: "100%", outline: "none", fontFamily: "'Plus Jakarta Sans',sans-serif", resize: "none" }} />
-        : <input value={value} onChange={onChange} placeholder={placeholder} type={type}
-          style={{ background: T.surface2, border: `1.5px solid ${T.border}`, borderRadius: 12, padding: "11px 13px", color: T.text, fontSize: 14, width: "100%", outline: "none", fontFamily: "'Plus Jakarta Sans',sans-serif" }} />
-      }
-    </div>
-  );
-
-  // ── Dish Card ──
-  const DishCard = ({ dish, onOpen, delay = 0 }) => {
-    const restaurant = dish.Restaurant || dish.restaurant;
-    const isSaved = savedIds.includes(dish.id || dish.ID);
-    const color = getCategoryColor(dish.category || dish.Category);
-    const tag = getDishTag(dish);
-    return (
-      <div onClick={onOpen}
-        style={{ background: T.surface, borderRadius: 18, marginBottom: 11, border: `1px solid ${T.border}`, overflow: "hidden", cursor: "pointer", animation: `slideUp .32s ease forwards`, animationDelay: `${delay}s`, opacity: 0, boxShadow: T.shadow }}>
-        <div style={{ height: 2.5, background: `linear-gradient(90deg,${color},transparent)` }} />
-        <div style={{ padding: "13px 15px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: "flex", gap: 5, marginBottom: 7, flexWrap: "wrap" }}>
-                <Tag text={tag} color={color} />
-                {restaurant?.Verified && <Tag text="✓" color={GREEN} />}
-              </div>
-              <h3 style={{ color: T.text, fontSize: 15, fontWeight: 700, margin: "0 0 3px", letterSpacing: -.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Fraunces',serif" }}>
-                {dish.Name || dish.name}
-              </h3>
-              <p style={{ color: T.text2, fontSize: 12, margin: "0 0 2px", fontWeight: 500 }}>{restaurant?.Name || restaurant?.name}</p>
-              <p style={{ color: T.text3, fontSize: 11, margin: 0 }}>📍 {restaurant?.Area || restaurant?.area} · {restaurant?.City || restaurant?.city}</p>
-            </div>
-            <button onClick={e => { e.stopPropagation(); toggleSave(dish); }}
-              style={{ width: 38, height: 38, background: isSaved ? T.accentBg : T.surface2, border: `1.5px solid ${isSaved ? T.accentBorder : T.border}`, borderRadius: 11, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 16, flexShrink: 0, transition: "all .15s" }}>
-              {isSaved ? "🔖" : "＋"}
-            </button>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 11, paddingTop: 11, borderTop: `1px solid ${T.border}` }}>
-            <span style={{ color: dish.saves > 0 ? "#F59E0B" : T.text3, fontSize: 12, fontWeight: 700 }}>
-              {dish.saves > 0 ? `★ ${(4 + Math.random()).toFixed(1)}` : "★ New"}
-            </span>
-            <span style={{ color: T.text3, fontSize: 11 }}>🔖 {(dish.Saves || dish.saves || 0).toLocaleString()}</span>
-            <span style={{ color: T.text3, fontSize: 11 }}>📹 Reel</span>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // ── Loading Spinner ──
-  const Spinner = () => (
-    <div style={{ textAlign: "center", padding: "40px 0" }}>
-      <div style={{ fontSize: 32, animation: "spin 1s linear infinite", display: "inline-block", marginBottom: 10 }}>🌀</div>
-      <p style={{ color: T.text2, fontSize: 14 }}>Loading...</p>
-    </div>
-  );
-
   return (
     <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", background: "#E8DFC0", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: 16, transition: "background .3s" }}>
       <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,700&display=swap" rel="stylesheet" />
@@ -508,7 +505,7 @@ api.get(`/restaurants/${restaurant.ID || restaurant.id}/reels`),
                       <PrimaryBtn onClick={() => setAddManual(true)}>Add Spot ＋</PrimaryBtn>
                     </div>
                   )}
-                  {searchResults.map((d, i) => <DishCard key={d.id || d.ID} dish={d} onOpen={() => openDish(d)} delay={i * .05} />)}
+                  {searchResults.map((d, i) => <DishCard key={d.id || d.ID} dish={d} onOpen={() => openDish(d)} delay={i * .05} isSaved={savedIds.includes(d.id || d.ID)} onToggleSave={toggleSave} />)}
                 </div>
               )}
 
@@ -577,7 +574,7 @@ api.get(`/restaurants/${restaurant.ID || restaurant.id}/reels`),
                     {city === "All Kerala" ? "⭐ All Dishes" : `${CITY_EMOJI[city]} Best in ${city}`}
                   </p>
                   {loading ? <Spinner /> : dishes.map((d, i) => (
-                    <DishCard key={d.id || d.ID} dish={d} onOpen={() => openDish(d)} delay={i * .04} />
+                    <DishCard key={d.id || d.ID} dish={d} onOpen={() => openDish(d)} delay={i * .04} isSaved={savedIds.includes(d.id || d.ID)} onToggleSave={toggleSave} />
                   ))}
                   {!loading && dishes.length === 0 && (
                     <div style={{ textAlign: "center", padding: "40px 0" }}>
@@ -715,7 +712,7 @@ api.get(`/restaurants/${restaurant.ID || restaurant.id}/reels`),
               </div>
               <div style={{ padding: "0 20px 110px" }}>
                 <p style={{ color: T.text3, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 11 }}>All Dishes</p>
-                {restDishes.length === 0 ? <Spinner /> : restDishes.map((d, i) => <DishCard key={d.id || d.ID} dish={d} onOpen={() => openDish(d)} delay={i * .05} />)}
+                {restDishes.length === 0 ? <Spinner /> : restDishes.map((d, i) => <DishCard key={d.id || d.ID} dish={d} onOpen={() => openDish(d)} delay={i * .05} isSaved={savedIds.includes(d.id || d.ID)} onToggleSave={toggleSave} />)}
                 {restReels.length > 0 && (
                   <>
                     <p style={{ color: T.text3, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", margin: "18px 0 11px" }}>Featured Reels ({restReels.length})</p>
