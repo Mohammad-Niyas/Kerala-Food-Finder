@@ -175,6 +175,7 @@ func fetchCaption(reelLink string) (string, error) {
 		"--skip-download",
 		"--print", "description",
 		"--no-playlist",
+		"--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 		reelLink,
 	)
 
@@ -191,6 +192,7 @@ func fetchCaption(reelLink string) (string, error) {
 			"--skip-download",
 			"--print", "title",
 			"--no-playlist",
+			"--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 			reelLink,
 		)
 		var stdout2 bytes.Buffer
