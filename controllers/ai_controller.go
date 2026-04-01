@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
@@ -130,13 +131,16 @@ func fetchCaptionWithRapidAPI(reelLink string) (string, error) {
 		return "", fmt.Errorf("RapidAPI credentials are not set")
 	}
 
-	url := "https://" + apiHost + "/get_ig_post_info_v2.php"
+	// Build the URL with Query Parameters
+	baseURL := "https://" + apiHost + "/get_media_data.php"
+	params := url.Values{}
+	params.Add("reel_post_code_or_url", reelLink)
+	params.Add("type", "reel")
+	
+	fullURL := baseURL + "?" + params.Encode()
 
-	payload := strings.NewReader("username_or_url=" + reelLink)
+	req, _ := http.NewRequest("GET", fullURL, nil)
 
-	req, _ := http.NewRequest("POST", url, payload)
-
-	req.Header.Add("content-type", "application/x-www-form-urlencoded")
 	req.Header.Add("x-rapidapi-key", apiKey)
 	req.Header.Add("x-rapidapi-host", apiHost)
 
@@ -156,11 +160,13 @@ func fetchCaptionWithRapidAPI(reelLink string) (string, error) {
 	var result map[string]interface{}
 	json.Unmarshal(bodyBytes, &result)
 
-	// API usually returns data in a "data" field
+	// The API returns data in "data" -> "caption_text"
 	data, ok := result["data"].(map[string]interface{})
 	if ok {
-		// New check for caption_text or text
 		if caption, ok := data["caption_text"].(string); ok {
+			return caption, nil
+		}
+		if caption, ok := data["text"].(string); ok {
 			return caption, nil
 		}
 		if caption, ok := data["caption"].(string); ok {
@@ -168,11 +174,6 @@ func fetchCaptionWithRapidAPI(reelLink string) (string, error) {
 		}
 	}
 	
-	// Fallback for some other formats
-	if caption, ok := result["caption"].(string); ok {
-		return caption, nil
-	}
-
 	return "", fmt.Errorf("could not find caption in API response")
 }
 
