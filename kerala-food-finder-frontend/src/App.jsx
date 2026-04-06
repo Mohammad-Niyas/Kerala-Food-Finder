@@ -5,18 +5,18 @@ const API_BASE = import.meta.env.VITE_API_URL;
 const CITIES = ["All Kerala","Kochi","Kozhikode","Kannur","Alappuzha","Thrissur","Thiruvananthapuram","Palakkad"];
 const CITY_DESCRIPTIONS = { Kochi: "The historic port city of Kochi, known for its colonial architecture and Chinese fishing nets.", Kozhikode: "The culinary capital of Kerala, home to the famous Malabar Biryani.", Kannur: "Land of Looms and Lores, known for its pristine beaches and traditional Theyyam.", Alappuzha: "Venice of the East, famous for its backwaters and houseboat cruises.", Thrissur: "The cultural capital of Kerala, hosting the grand Thrissur Pooram.", Thiruvananthapuram: "The administrative heart and the green city of Kerala.", Palakkad: "The gateway to Kerala, nestled in the Western Ghats." };
 
-const GOLD = "#D97706";
-const GOLD_DARK = "#92400E";
-const GOLD_MID = "#B45309";
+const LEAF_MAIN = "#4F772D";
+const LEAF_DARK = "#2D4C1E";
+const LEAF_SOFT = "#90A955";
 const GREEN = "#059669";
 
 
 const LIGHT_T = {
-  bg:"#FFFBF0", surface:"#FFFFFF", surface2:"#FEF9EC",
-  border:"#F0E4C0", text:"#1C1408", text2:"#7A5C20",
-  text3:"#A88040", accent:GOLD_MID, accent2:GOLD_DARK,
-  accentBg:"#FEF3C7", accentBorder:"#FDE68A",
-  nav:"rgba(255,251,240,0.96)", shadow:"0 4px 20px rgba(180,83,9,0.1)",
+  bg:"#F8FAF5", surface:"#FFFFFF", surface2:"#F0F4EF",
+  border:"#E0E7DE", text:"#1B2E15", text2:"#4F6D44",
+  text3:"#88A07A", accent:LEAF_MAIN, accent2:LEAF_DARK,
+  accentBg:"#ECF3E9", accentBorder:"#DDE7D8",
+  nav:"rgba(248,250,245,0.96)", shadow:"0 4px 20px rgba(79,119,45,0.08)",
   green:GREEN, greenBg:"#F0FDF4", greenBorder:"#BBF7D0",
 };
 
@@ -118,7 +118,7 @@ const RatingBar = ({ label, value, color = GOLD }) => (
 
 const PrimaryBtn = ({ children, onClick, full = false, variant = "gold", disabled = false }) => {
   const variants = {
-    gold: { background: `linear-gradient(135deg,${GOLD},${GOLD_MID})`, color: "#1C1408", border: "none", boxShadow: `0 4px 16px ${GOLD}44` },
+    gold: { background: `linear-gradient(135deg,${LEAF_MAIN},${LEAF_DARK})`, color: "#fff", border: "none", boxShadow: `0 4px 16px ${LEAF_MAIN}33` },
     outline: { background: "transparent", color: T.accent, border: `1.5px solid ${T.accentBorder}`, boxShadow: "none" },
     ghost: { background: T.surface2, color: T.text2, border: `1.5px solid ${T.border}`, boxShadow: "none" },
     green: { background: `linear-gradient(135deg,${GREEN},#047857)`, color: "#fff", border: "none", boxShadow: `0 4px 16px ${GREEN}44` },
@@ -445,12 +445,12 @@ api.get(`/restaurants/${restaurant.ID || restaurant.id}/reels`),
           {screen === "onboard" && (
             <div style={{ position: "absolute", inset: 0, background: T.bg, zIndex: 999, display: "flex", flexDirection: "column", padding: "32px 26px 28px", animation: "fadeIn .4s ease" }}>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                <div style={{ width: 60, height: 60, background: `linear-gradient(135deg,${GOLD},${GOLD_DARK})`, borderRadius: 18, display: "flex", alignItems: "center", justifyContent: "center", color: "#1C1408", marginBottom: 20, boxShadow: `0 8px 28px ${GOLD}55`, animation: "glow 2s ease infinite" }}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <div style={{ width: 64, height: 64, background: `linear-gradient(135deg,${LEAF_MAIN},${LEAF_DARK})`, borderRadius: 20, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", marginBottom: 20, boxShadow: `0 8px 28px ${LEAF_MAIN}44`, animation: "glow 2s ease infinite" }}>
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.2C18.5 17.5 16 19 11 20Z"/><path d="M11 20c-1.5-5 1.5-9 6-11"/></svg>
                 </div>
                 <p style={{ color: T.accent, fontSize: 11, fontWeight: 700, letterSpacing: 2.5, textTransform: "uppercase", margin: "0 0 8px" }}>ELAYIL</p>
                 <h1 style={{ fontFamily: "'Fraunces',serif", color: T.text, fontSize: 38, fontWeight: 800, margin: "0 0 10px", lineHeight: 1.05, letterSpacing: -1 }}>Save dishes.<br />Find them<br /><em style={{ color: T.accent }}>when you travel.</em></h1>
-                <p style={{ color: T.text2, fontSize: 15, margin: "0 0 36px", lineHeight: 1.7 }}>Paste any food reel — our system extracts the dishes.<br />The app reminds you when you're nearby.</p>
+                <p style={{ color: T.text2, fontSize: 15, margin: "0 0 36px", lineHeight: 1.7 }}>Paste any food reel — our AI extracts the dishes.<br />The app reminds you when you're nearby.</p>
                 {[
                   { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>, t: "Auto Reel Extract", d: "Paste a reel link — our engine identifies all dishes" },
                   { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>, t: "Dish-First Search", d: "Search for 'Biryani in Kozhikode' — not just restaurants" },
@@ -477,14 +477,14 @@ api.get(`/restaurants/${restaurant.ID || restaurant.id}/reels`),
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 4 }}>
-                      <div style={{ width: 22, height: 22, background: `linear-gradient(135deg,${GOLD},${GOLD_DARK})`, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", color: "#1C1408" }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <div style={{ width: 24, height: 24, background: `linear-gradient(135deg,${LEAF_MAIN},${LEAF_DARK})`, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.2C18.5 17.5 16 19 11 20Z"/><path d="M11 20c-1.5-5 1.5-9 6-11"/></svg>
                       </div>
                       <p style={{ color: T.accent, fontSize: 11, fontWeight: 700, letterSpacing: 2.5, textTransform: "uppercase", margin: 0 }}>ELAYIL</p>
                     </div>
                     <h1 style={{ fontFamily: "'Fraunces',serif", color: T.text, fontSize: 24, fontWeight: 800, margin: 0, lineHeight: 1.15, letterSpacing: -.4 }}>Discover the best<br />local spots</h1>
                   </div>
-                  <button onClick={() => setAddReel(true)} style={{ width: 42, height: 42, background: `linear-gradient(135deg,${GOLD},${GOLD_MID})`, border: "none", borderRadius: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 16px ${GOLD}55`, color: "#1C1408" }}>
+                  <button onClick={() => setAddReel(true)} style={{ width: 42, height: 42, background: `linear-gradient(135deg,${LEAF_MAIN},${LEAF_DARK})`, border: "none", borderRadius: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 16px ${LEAF_MAIN}33`, color: "#fff" }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   </button>
                 </div>
@@ -505,7 +505,7 @@ api.get(`/restaurants/${restaurant.ID || restaurant.id}/reels`),
                 <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, marginBottom: 16 }}>
                   {CITIES.map(c => (
                     <button key={c} onClick={() => setCity(c)}
-                      style={{ background: city === c ? `linear-gradient(135deg,${GOLD},${GOLD_MID})` : T.surface, color: city === c ? "#1C1408" : T.text2, border: city === c ? "none" : `1.5px solid ${T.border}`, borderRadius: 99, padding: "7px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Plus Jakarta Sans',sans-serif", boxShadow: city === c ? `0 3px 12px ${GOLD}44` : "none", transition: "all .15s" }}>
+                      style={{ background: city === c ? `linear-gradient(135deg,${LEAF_MAIN},${LEAF_DARK})` : T.surface, color: city === c ? "#fff" : T.text2, border: city === c ? "none" : `1.5px solid ${T.border}`, borderRadius: 99, padding: "7px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Plus Jakarta Sans',sans-serif", boxShadow: city === c ? `0 3px 12px ${LEAF_MAIN}33` : "none", transition: "all .15s" }}>
                       {c}
                     </button>
                   ))}
@@ -699,7 +699,7 @@ api.get(`/restaurants/${restaurant.ID || restaurant.id}/reels`),
           {screen === "main" && tab === "profile" && (
             <div style={{ padding: "20px 20px 110px", animation: "fadeIn .25s ease" }}>
               <div style={{ textAlign: "center", marginBottom: 22 }}>
-                <div style={{ width: 68, height: 68, borderRadius: "50%", background: `linear-gradient(135deg,${GOLD},${GOLD_DARK})`, margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", color: "#1C1408", boxShadow: `0 8px 24px ${GOLD}44` }}>
+                <div style={{ width: 68, height: 68, borderRadius: "50%", background: `linear-gradient(135deg,${LEAF_MAIN},${LEAF_DARK})`, margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", boxShadow: `0 8px 24px ${LEAF_MAIN}33` }}>
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <h2 style={{ fontFamily: "'Fraunces',serif", color: T.text, fontSize: 21, fontWeight: 800, margin: "0 0 3px" }}>Kerala Food Lover</h2>
