@@ -1,43 +1,41 @@
-# 🍛 Kerala Food Finder (MVP)
+# 🍛 Kerala Food Finder
 
 > **"Discovering Kerala's culinary soul through the power of multi-modal AI."**
 
-Kerala Food Finder is an advanced AI-powered discovery platform that bridges the gap between viral social media reels and your next favorite meal. By leveraging state-of-the-art **Speech-to-Text** and **Large Language Models**, we transform unstructured food content into structured, searchable dining insights across Kerala.
+Kerala Food Finder is an advanced AI-powered discovery platform that bridges the gap between viral social media reels and your next favorite meal. By leveraging state-of-the-art **Instagram Scraper APIs** and **LLM inference**, we transform unstructured food content into structured, searchable dining insights across Kerala.
 
 ---
 
 ## 🚀 Key Features
 
-- **🎤 AI Audio Transcription**: Instantly convert spoken reviews in food reels into high-fidelity text transcripts.
-- **🤖 Intelligent Extraction**: Automatically parse restaurant names, cities (Kochi, Kozhikode, Thrissur, etc.), and dish lists from transcribed audio and captions.
-- **🔍 Smarter Discovery**: Filter by specific Kerala delicacies, cities, or trending spots to plan your food journey.
-- **📈 Viral Sentiment**: Track trending restaurants based on social media buzz and real-user "Saves."
-- **📍 Personal Food Bucket List**: Curate your favorites into a personalized collection of must-visit spots.
-- **🎬 Integrated Reel Player**: View the original content directly on the platform to verify recommendations.
+- **🎬 Smart Reel Extraction**: Paste any Instagram Reel link to automatically extract restaurant names, localities, and featured dishes.
+- **🤖 Intelligent Entity Parsing**: Powered by Llama 3.3 (70B) to understand context, slang, and specific Kerala geography.
+- **🔍 Dish-First Discovery**: Search for specific delicacies like *"Kozhikode Biryani"* or *"Kochi Meen Mulakittathu"* instead of just restaurant names.
+- **📍 Personal Food Bucket List**: Curate your favorites into a personalized collection of must-visit spots across the 14 districts of Kerala.
+- **🌟 Community Sentiment**: Track trending restaurants based on real-user saves and interaction buzz.
+- **✨ Premium UI/UX**: A high-end, mobile-first experience designed with a "Gold & Palm" aesthetic.
 
 ---
 
-## 🤖 AI Architecture (The "Brain")
+## 🧠 AI Architecture (The "Brain")
 
-The platform features a multi-stage AI pipeline to ensure the highest accuracy in food discovery.
+The platform features a professional-grade AI pipeline to ensure the highest accuracy in food discovery, moving away from unstable local scrapers to stable, high-performance APIs.
 
 | Component | Technology | Role |
 | :--- | :--- | :--- |
-| **Media Fetcher** | `yt-dlp` (Python Integration) | Extracts headers, captions, and audio metadata from Instagram/YouTube links. |
-| **Audio Transcription** | **AssemblyAI** | Processes reel audio using advanced ASR to generate full-text transcripts. |
-| **Inference Engine** | **Groq AI (Llama 3.3 70B)** | An "LLM-on-Steroids" that analyzes transcripts to extract structured entities. |
-| **Geographic Parsing** | Custom Prompting | Tailored logic to identify Kerala's unique geography (14 districts and smaller locales). |
+| **Media Interface** | **RapidAPI (Instagram Scraper)** | Fetches high-fidelity captions, metadata, and reel details via professional social data bridges. |
+| **Inference Engine** | **Groq AI (Llama 3.3 70B)** | An ultra-fast "LLM-on-Steroids" that analyzes metadata to extract structured JSON entities. |
+| **Geographic Parsing** | **Custom Region Logic** | Specifically tuned to identify Kerala's unique districts (Kochi, Kozhikode, Thrissur, etc.) and micro-locations. |
+| **Data Orchestration** | **Go (Gin)** | Highly concurrent backend managing the flow between UI, APIs, and the database. |
 
-### The Extraction Workflow:
-1.  **Input**: User pastes a Reel URL.
-2.  **Meta-Fetch**: `yt-dlp` & `ffmpeg` extract caption text and audio streams.
-3.  **Transcribe**: **AssemblyAI** converts audio speech into a searchable transcript.
-4.  **Analyze**: **Groq (Llama 3.3)** takes both caption and transcript to output a clean JSON:
-    - `restaurant`: Restaurant Name
-    - `city`: Kerala District/City
-    - `area`: Locality/Street
-    - `dishes`: Full list of menu items mentioned.
-5.  **Store**: Data is validated and linked to the PostgreSQL database for instant discovery.
+### The "Social-to-Plate" Workflow:
+1.  **Input**: User pastes a Reel URL into the discovery engine.
+2.  **API Fetch**: The system queries **RapidAPI** to retrieve the reel's caption and metadata reliably.
+3.  **LLM Analysis**: **Groq (Llama 3.3)** parses the text to identify:
+    - `restaurant`: The name of the culinary spot.
+    - `city/area`: Precise Kerala-specific geographic data.
+    - `dishes`: A comprehensive list of menu items mentioned or showcased.
+4.  **Discovery**: Extracted data is indexed and instantly searchable by the community.
 
 ---
 
@@ -46,13 +44,13 @@ The platform features a multi-stage AI pipeline to ensure the highest accuracy i
 ### Core Technologies
 - **Backend**: [Go (Gin Gonic)](https://go.dev/) - Performance-focused concurrent backend.
 - **Frontend**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) - Ultra-fast, reactive user experience.
-- **Database**: [PostgreSQL](https://www.postgresql.org/) (Primary with GORM) & [MongoDB](https://www.mongodb.com/) (Extracted Metadata).
+- **Database**: [PostgreSQL](https://www.postgresql.org/) (Primary with GORM) - Robust relational storage.
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Modern, premium UI system.
 
-### AI & Media Utilities
-- **Transcription**: [AssemblyAI](https://www.assemblyai.com/)
-- **Large Language Model**: [Groq](https://groq.com/) (Llama 3.3 70B)
-- **Tooling**: `ffmpeg`, `yt-dlp` (Python-based media processing)
+### AI & Integration
+- **Extraction**: [RapidAPI](https://rapidapi.com/) (Social Data Scraper)
+- **Large Language Model**: [Groq AI](https://groq.com/) (Llama 3.3 70B Versatile)
+- **Environment**: Containerized via Docker for seamless deployment.
 
 ---
 
@@ -60,16 +58,26 @@ The platform features a multi-stage AI pipeline to ensure the highest accuracy i
 
 ```text
 Kerala-Food-Finder/
-├── cmd/                # Entry point (main.go)
+├── cmd/                # Backend entry point (main.go)
+├── controllers/        # Business Logic (RapidAPI & Groq Integration)
+├── models/             # Schema definitions (GORM Entities)
+├── routes/             # API Endpoints (/api/ai, /api/dishes, /api/search)
 ├── config/             # DB & Environment Configuration
-├── controllers/        # Business Logic & AI Pipeline (Handling Groq/AssemblyAI)
-├── models/             # Database Schemas (GORM Models)
-├── middleware/         # Auth, Security, and CORS
-├── routes/             # API Endpoints (/api/ai, /api/search, /api/dishes)
-├── seed/               # Initial demographic & restaurant data
-├── kerala-food-finder-frontend/  # React/Tailwind Frontend application
-└── Dockerfile          # Multi-container deployment config
+├── kerala-food-finder-frontend/  # React Frontend (80+ KB Optimized App)
+└── Dockerfile          # Production deployment configuration
 ```
+
+---
+
+## 🗺️ Project Roadmap & Pending Features
+
+We are currently in the **MVP+ phase**. Based on our latest architecture revision, the following features are in the pipeline:
+
+- [ ] **🔐 Professional Auth System**: Transitioning from `localStorage` to a full JWT-based User Authentication system.
+- [ ] **📍 Real-time Travel Reminders**: Implementing geofencing to notify users when they are near a "Saved" dish.
+- [ ] **🗺️ Interactive MapView**: A visual map (Leaflet/Google Maps) to browse saved spots geographically.
+- [ ] **🎙️ Deep Audio Extraction**: Re-integrating **AssemblyAI** to transcribe reel voiceovers for 100% data coverage.
+- [ ] **🛡️ Admin Verification Portal**: A dedicated interface for food critics and admins to "Verify" restaurant data.
 
 ---
 
@@ -78,8 +86,7 @@ Kerala-Food-Finder/
 ### Prerequisites
 - **Go** (v1.25.0+)
 - **Node.js** & **npm**
-- **Python 3** (with `yt-dlp` installed)
-- **ffmpeg** (for audio extraction)
+- **RapidAPI Account** (For Instagram data)
 
 ### Quick Start
 1.  **Clone the Repo**:
@@ -94,27 +101,16 @@ Kerala-Food-Finder/
     DB_USER=your_user
     DB_PASSWORD=your_password
     DB_NAME=kerala_food_finder
-    GROQ_API_KEY=your_groq_key
-    ASSEMBLY_AI_KEY=your_assemblyai_key
     PORT=8081
+    
+    # AI & API KEYS
+    GROQ_API_KEY=your_groq_key
+    RAPID_API_KEY=your_rapidapi_key
+    RAPID_API_HOST=instagram-scraper-api2.p.rapidapi.com
     ```
-3.  **Run Backend**:
-    ```bash
-    go mod download
-    go run cmd/main.go
-    ```
-4.  **Run Frontend**:
-    ```bash
-    cd kerala-food-finder-frontend
-    npm install
-    npm run dev
-    ```
-
----
-
-## 🤝 Contributing
-
-This is currently in **MVP phase**. Features like automated reel crawling and community-led tagging are in development. Feel free to open an issue for feature requests!
+3.  **Run Systems**:
+    - **Backend**: `go run cmd/main.go`
+    - **Frontend**: `cd kerala-food-finder-frontend && npm run dev`
 
 ---
 
